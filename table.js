@@ -1,29 +1,45 @@
-const sheetId = 'api-test-383816';
-const sheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=your-api-key`;
 
-fetch(sheetUrl)
+const sheetUrl = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=your-api-key`;
+// Replace YOUR_SHEET_ID and YOUR_API_KEY with your own values
+const sheetId = 'api-test-383816';
+const apiKey = 'AIzaSyDneFEQr97arD3xsQezomiVgSB1xtpZJIo';
+
+// Define the URL to fetch the data from the Google Sheets API
+const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+
+// Fetch the data from the Google Sheets API
+fetch(url)
   .then(response => response.json())
   .then(data => {
-    const table = document.createElement('table');
-    table.classList.add('responsive-table');
+    // Extract the headers and rows from the data
+    const headers = data.values[0];
+    const rows = data.values.slice(1);
 
-    const headerRow = table.insertRow(0);
-    data.values[0].forEach(header => {
+    // Create a table element and add it to the container
+    const table = document.createElement('table');
+    const container = document.querySelector('.table-container');
+    container.appendChild(table);
+
+    // Add the headers to the table
+    const headerRow = document.createElement('tr');
+    table.appendChild(headerRow);
+    headers.forEach(header => {
       const th = document.createElement('th');
-      th.innerText = header;
+      th.textContent = header;
       headerRow.appendChild(th);
     });
 
-    for (let i = 1; i < data.values.length; i++) {
-      const row = table.insertRow(i);
-
-      data.values[i].forEach(cell => {
+    // Add the rows to the table
+    rows.forEach(rowData => {
+      const row = document.createElement('tr');
+      table.appendChild(row);
+      rowData.forEach(cellData => {
         const td = document.createElement('td');
-        td.innerText = cell;
+        td.textContent = cellData;
         row.appendChild(td);
       });
-    }
-
-    const container = document.querySelector('.table-container');
-    container.appendChild(table);
+    });
+  })
+  .catch(error => {
+    console.error(error);
   });
